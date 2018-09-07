@@ -1,0 +1,26 @@
+{
+  "name": "metars-node",
+  "version": "1.0.0",
+  "description": "Gets metars using node",
+  "main": "metarsNode.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rifflesbits/metarsNode.git"
+  },
+  "keywords": [
+    "metar"
+  ],
+  "author": "rifflesbits",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rifflesbits/metarsNode/issues"
+  },
+  "homepage": "https://github.com/rifflesbits/metarsNode#readme",
+  "dependencies": {
+    "request": "^2.88.0",
+    "xmldom": "^0.1.27"
+  }
+}
