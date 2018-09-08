@@ -30,7 +30,7 @@ function getWx(httpResponse){
 
 
 
-    var allReports = '';
+    var allReports = [];
 
     for(var i=0; i < wxReports.length; i++){
 
@@ -40,16 +40,16 @@ function getWx(httpResponse){
 
       var firstWxReportTxtVal = firstWxReportTxtEl.nodeValue;
 
-      allReports += firstWxReportTxtVal + '\n';
+      allReports.push(firstWxReportTxtVal);
     }
 
-    console.log(firstWxReportTxtVal);
+    console.log('allReports: ' + allReports);
 
     var view = {
       wxReports: allReports
     };
 
-    var output = mustache.render("<h1>METARS</h1> <p>{{wxReports}}</p>", view);
+    var output = mustache.render('<h1>METARS</h1> {{#wxReports}} <p> {{.}} </p> {{/wxReports}} ', view);
 
     console.log('output: \n' + output);
 
