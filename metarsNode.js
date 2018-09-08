@@ -7,6 +7,7 @@ const fs = require('fs');
 const request = require('request');
 //const xmldoc = require('xmldoc');
 const DOMParser = require('xmldom').DOMParser;
+const mustache = require('mustache');
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -27,7 +28,9 @@ function getWx(httpResponse){
 
     var wxReports = wxDoc.getElementsByTagName('raw_text');
 
-    httpResponse.writeHead(200, {'Content-Type': 'text/html'});
+
+
+    var allReports = '';
 
     for(var i=0; i < wxReports.length; i++){
 
@@ -37,11 +40,21 @@ function getWx(httpResponse){
 
       var firstWxReportTxtVal = firstWxReportTxtEl.nodeValue;
 
-      console.log(firstWxReportTxtVal);
-
-      httpResponse.write('<p>' + firstWxReportTxtVal + '</p>');
+      allReports += firstWxReportTxtVal + '\n';
     }
 
+    console.log(firstWxReportTxtVal);
+
+    var view = {
+      wxReports: allReports
+    };
+
+    var output = mustache.render("<h1>METARS</h1> <p>{{wxReports}}</p>", view);
+
+    console.log('output: \n' + output);
+
+    httpResponse.writeHead(200, {'Content-Type': 'text/html'});
+    httpResponse.write(output);
     httpResponse.end();
   });
 }
