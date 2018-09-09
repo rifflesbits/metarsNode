@@ -1,11 +1,8 @@
 /*
   Simple application to get weather metars from airport ids
 */
-
 const express = require('express');
 const app = express();
-const http = require('http');
-const fs = require('fs');
 const request = require('request');
 //const xmldoc = require('xmldoc');
 const DOMParser = require('xmldom').DOMParser;
@@ -61,23 +58,17 @@ function getWx(httpResponse){
   });
 }
 
-//res.write('<h2>Date/Time: ' + dt.myDateTime() + '</h2>');
+app.set('views', './views');
+app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
+  res.render('index');
+});
+
+app.get('/wx', function(req, res){
   getWx(res);
 });
 
 app.listen(3000, () => {
   console.log('App Listening!...')
 });
-
-
-/*
-const server = http.createServer((req, res) => {
-    getWx(res); //asynch
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
-*/
