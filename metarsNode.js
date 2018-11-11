@@ -4,18 +4,24 @@
 const express = require('express');
 const app = express();
 const request = require('request');
-//const xmldoc = require('xmldoc');
 const DOMParser = require('xmldom').DOMParser;
 const mustache = require('mustache');
+
+// body parser is for getting post request params out of
+// the http request sent to our server functions here
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 const hostname = '127.0.0.1';
 const port = 3000;
 
-var airportIds;
+/*
+  Gets wx reports and writes them into the response
+*/
+function getWx(airportIds, httpResponse){
 
-function getWx(httpResponse){
-
-  var wxReqUrl = 'https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=KJZI,KLRO&hoursBeforeNow=1&mostRecentForEachStation=true&fields=raw_text';
+  var wxReqUrl = 'https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=xml&stationString=' + airportIds + '&hoursBeforeNow=1&mostRecentForEachStation=true&fields=raw_text';
 
   request(wxReqUrl, function (error, response, body) {
     // Print the error if one occurred
@@ -26,7 +32,6 @@ function getWx(httpResponse){
     var wxDoc = new DOMParser().parseFromString(body);
 
     var wxReports = wxDoc.getElementsByTagName('raw_text');
-
 
 
     var allReports = [];
@@ -48,7 +53,7 @@ function getWx(httpResponse){
       wxReports: allReports
     };
 
-    var output = mustache.render('<h1>METARS</h1> {{#wxReports}} <p> {{.}} </p> {{/wxReports}} ', view);
+    var output = mustache.render('{{#wxReports}} <p> {{.}} </p> {{/wxReports}} ', view);
 
     console.log('output: \n' + output);
 
@@ -61,14 +66,29 @@ function getWx(httpResponse){
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
+/*
+  Show the initial load page that has the
+  text box entry for airport ids and the
+  submit button
+*/
 app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/wx', function(req, res){
-  getWx(res);
+/*
+  Handles request to get wx wxReports
+  Depends on input json containing req param: airportIds
+*/
+app.post('/wx', function(req, res){
+
+  var airportIds = req.body.airportIds;
+
+  console.log('airportIds! = ' + airportIds);
+
+  getWx(airportIds, res);
 });
 
+// entry point for starting the app server
 app.listen(3000, () => {
   console.log('App Listening!...')
 });

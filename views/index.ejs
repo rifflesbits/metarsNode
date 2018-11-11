@@ -1,23 +1,28 @@
 <html>
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script>
     $(function(){
 
        $('#submitButton').click(function(event){
 
-         event.preventDefault();
+        event.preventDefault();
 
-         alert('Hey! :)');
+         // prepare req params to call server function. Values
+         // must be space or comma separated for FAA wx url
+         var airportIds = $('#aiportIdsInput').val();
+
+         var reqParms = {'airportIds': airportIds};
+
+         // call server url to get wx report for passed in airport
+         // id's and then populate a div with the results
+         $('#metarResults').load('/wx', reqParms);
        });
 
     });
   </script>
 </head>
-
 <body>
 <form class="form-horizontal">
 <fieldset>
@@ -25,10 +30,9 @@
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="aiportIdsInput">Airports:</label>
+  <label class="col-md-4 control-label" for="aiportIdsInput">Airports Ids</label>
   <div class="col-md-4">
-  <input id="aiportIdsInput" name="aiportIdsInput" type="text" placeholder="Ids" class="form-control input-md">
-  <span class="help-block">space or comma delimited</span>
+  <input id="aiportIdsInput" name="aiportIdsInput" type="text" placeholder="space or comma delimited" class="form-control input-md">
   </div>
 </div>
 
@@ -40,12 +44,7 @@
   </div>
 </div>
 
-<!-- Textarea -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="metarsTextArea">Metars</label>
-  <div class="col-md-4">
-    <textarea class="form-control" id="metarsTextArea" name="metarsTextArea"></textarea>
-  </div>
+<div id="metarResults" >
 </div>
 
 </fieldset>
