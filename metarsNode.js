@@ -10,6 +10,7 @@ const mustache = require('mustache');
 // body parser is for getting post request params out of
 // the http request sent to our server functions here
 const bodyParser = require('body-parser');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -18,6 +19,9 @@ const port = 3000;
 
 /*
   Gets wx reports and writes them into the response
+
+  airportIds 
+    should be space or comma delimited
 */
 function getWx(airportIds, httpResponse){
 
@@ -31,28 +35,32 @@ function getWx(airportIds, httpResponse){
 
     var wxDoc = new DOMParser().parseFromString(body);
 
-    var wxReports = wxDoc.getElementsByTagName('raw_text');
+    var aWxReportsRawTxtEls = wxDoc.getElementsByTagName('raw_text');
 
 
-    var allReports = [];
+    var aAllReports = [];
 
-    for(var i=0; i < wxReports.length; i++){
+    // parse the xml dom elements; get the string values out of them
+    for(var i=0; i < aWxReportsRawTxtEls.length; i++){
 
-      var firstWxReportEl = wxReports[i];
+      var firstWxReportEl = aWxReportsRawTxtEls[i];
 
       var firstWxReportTxtEl = firstWxReportEl.childNodes[0];
 
       var firstWxReportTxtVal = firstWxReportTxtEl.nodeValue;
 
-      allReports.push(firstWxReportTxtVal);
+      aAllReports.push(firstWxReportTxtVal);
     }
 
-    console.log('allReports: ' + allReports);
+    console.log('aAllReports: ' + aAllReports);
 
+    // prepare object holding array of wx report results that we can send to the 
+    // mustache template engine
     var view = {
-      wxReports: allReports
+      wxReports: aAllReports
     };
 
+    // create a string with mustache template putting each wx report from array on a new line
     var output = mustache.render('{{#wxReports}} <p> {{.}} </p> {{/wxReports}} ', view);
 
     console.log('output: \n' + output);
@@ -63,6 +71,7 @@ function getWx(airportIds, httpResponse){
   });
 }
 
+// configure our ejs view resolver engine
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
@@ -89,6 +98,6 @@ app.post('/wx', function(req, res){
 });
 
 // entry point for starting the app server
-app.listen(3000, () => {
-  console.log('App Listening!...')
+app.listen(port, () => {
+  console.log('App Listening! on port:' + port)
 });

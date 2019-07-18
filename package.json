@@ -1,7 +1,7 @@
 {
   "name": "metars-node",
   "version": "1.0.0",
-  "description": "Gets metars using node",
+  "description": "Gets FAA metars for airport id's using node",
   "main": "metarsNode.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,7 +24,6 @@
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "mustache": "^2.3.2",
-    "pug": "^2.0.4",
     "request": "^2.88.0",
     "xmldom": "^0.1.27"
   }
